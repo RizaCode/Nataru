@@ -87,4 +87,122 @@ button:disabled {
 
 /* COUNTDOWN */
 #countdown {
-    mar
+    margin-top: 10px;
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 18px;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* SALJU */
+.snow {
+    position: absolute;
+    top: -10px;
+    color: white;
+    animation: fall linear infinite;
+    user-select: none;
+    pointer-events: none;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- MUSIK -->
+<audio id="music" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/12/06/audio_4b0f6b9fa5.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container">
+    <div class="card">
+        <h1>🎄 Selamat Hari Natal 🎄</h1>
+        <h2>Untuk Tiurma Warna Purba</h2>
+
+        <p>
+            Semoga Natal ini membawa damai,<br>
+            sukacita, dan kasih yang hangat<br>
+            untuk hari ini dan seterusnya ✨
+        </p>
+
+        <button id="btnNewYear" disabled>
+            🎆 Selamat Tahun Baru (Tidak Tersedia)
+        </button>
+
+        <div id="countdown">⏳ Menghitung waktu...</div>
+
+        <button onclick="toggleMusic()">🎵 Play / Pause Musik</button>
+
+        <div class="footer">- From Zacacu -</div>
+    </div>
+</div>
+
+<script>
+// ================= SALJU =================
+function createSnow() {
+    const snow = document.createElement("div");
+    snow.className = "snow";
+    snow.innerHTML = "❄";
+    snow.style.left = Math.random() * 100 + "vw";
+    snow.style.fontSize = Math.random() * 10 + 12 + "px";
+    snow.style.animationDuration = Math.random() * 3 + 3 + "s";
+    document.body.appendChild(snow);
+
+    setTimeout(() => snow.remove(), 6000);
+}
+setInterval(createSnow, 200);
+
+// ================= MUSIK =================
+function toggleMusic() {
+    const music = document.getElementById("music");
+    if (music.paused) music.play();
+    else music.pause();
+}
+
+// ================= COUNTDOWN GMT+7 =================
+const btn = document.getElementById("btnNewYear");
+const countdown = document.getElementById("countdown");
+
+// Target 1 Januari 00:00 WIB (GMT+7)
+const target = new Date("2026-01-01T00:00:00+07:00");
+
+function updateCountdown() {
+    const now = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) {
+        btn.disabled = false;
+        btn.innerHTML = "🎆 Buka Ucapan Tahun Baru";
+        countdown.innerHTML = "✨ Selamat Tahun Baru! ✨";
+
+        btn.onclick = () => {
+            alert("🎆 Selamat Tahun Baru! 🎆");
+        };
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdown.innerHTML =
+        `⏳ Tersedia dalam ${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+</body>
+</html>
