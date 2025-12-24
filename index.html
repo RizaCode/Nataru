@@ -3,88 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Selamat Natal & Tahun Baru</title>
 
 <style>
-    body {
-        margin: 0;
-        min-height: 100vh;
-        background: linear-gradient(#0b3d2e, #1e293b);
-        font-family: Arial, sans-serif;
-        overflow-x: hidden;
-        color: white;
+* {
+    box-sizing: border-box;
+}
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0b3d2e, #1e293b);
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+    color: white;
+}
+
+/* CARD */
+.card {
+    position: relative;
+    z-index: 5;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    max-width: 90%;
+    width: 380px;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 25px 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    animation: fadeIn 2s ease;
+}
+
+h1 {
+    color: #ffdd57;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-weight: normal;
+    font-size: 1.1em;
+}
+
+p {
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
+    border: none;
+    padding: 12px;
+    color: white;
+    border-radius: 12px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* FROM */
+.from {
+    margin-top: 15px;
+    font-style: italic;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+/* SALJU */
+.snow {
+    position: absolute;
+    top: -10px;
+    color: white;
+    animation: fall linear infinite;
+    z-index: 1;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh);
     }
+}
 
-    .card {
-        position: relative;
-        z-index: 2;
-        background: rgba(20, 108, 67, 0.9);
-        width: 100%;
-        max-width: 420px;
-        padding: 25px;
-        border-radius: 20px;
-        text-align: center;
-        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+/* FIREWORK */
+.firework {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: transparent;
+    border-radius: 50%;
+    animation: explode 1s ease-out forwards;
+    z-index: 1;
+}
+
+@keyframes explode {
+    0% {
+        box-shadow: 0 0 #fff;
+        opacity: 1;
     }
-
-    h1 {
-        color: #ffdd57;
-        margin-top: 0;
+    100% {
+        box-shadow:
+            0 -80px red,
+            56px -56px yellow,
+            80px 0 cyan,
+            56px 56px magenta,
+            0 80px lime,
+            -56px 56px orange,
+            -80px 0 violet,
+            -56px -56px pink;
+        opacity: 0;
     }
+}
 
-    h2 {
-        margin-bottom: 15px;
-    }
-
-    button {
-        background-color: #ff4d4d;
-        border: none;
-        padding: 14px 22px;
-        color: white;
-        border-radius: 12px;
-        cursor: pointer;
-        margin: 8px;
-        font-size: 16px;
-    }
-
-    button:hover {
-        background-color: #ff1a1a;
-    }
-
-    .snow {
-        position: absolute;
-        top: -10px;
-        color: white;
-        animation: fall linear infinite;
-        user-select: none;
-        pointer-events: none;
-    }
-
-    @keyframes fall {
-        to {
-            transform: translateY(110vh);
-        }
-    }
-
-    @media (max-width: 480px) {
-        h1 {
-            font-size: 22px;
-        }
-
-        h2 {
-            font-size: 18px;
-        }
-
-        p {
-            font-size: 14px;
-        }
-    }
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(-45%);}
+    to {opacity:1; transform: translateY(-50%);}
+}
 </style>
 </head>
 
@@ -105,61 +148,77 @@
         untuk hari ini dan seterusnya ✨
     </p>
 
-    <button onclick="changeMessage()">🎆 Ucapan Tahun Baru</button>
-    <button onclick="toggleMusic()">🔊 Musik ON / OFF</button>
+    <button onclick="changeMessage()">🎆 Ganti Ucapan</button>
+    <button onclick="toggleMusic()">🎵 Play / Pause Musik</button>
+
+    <div class="from">- From Zacacu -</div>
 </div>
 
 <script>
-    // SALJU
-    function createSnow() {
-        const snow = document.createElement("div");
-        snow.classList.add("snow");
-        snow.innerHTML = "❄";
-        snow.style.left = Math.random() * 100 + "vw";
-        snow.style.animationDuration = Math.random() * 3 + 2 + "s";
-        snow.style.fontSize = Math.random() * 10 + 10 + "px";
-        document.body.appendChild(snow);
+let isNewYear = false;
+let snowInterval;
+let fireworkInterval;
 
-        setTimeout(() => {
-            snow.remove();
-        }, 5000);
+/* MUSIK */
+function toggleMusic() {
+    const music = document.getElementById("music");
+    if (music.paused) music.play();
+    else music.pause();
+}
+
+/* SALJU */
+function createSnow() {
+    const snow = document.createElement("div");
+    snow.className = "snow";
+    snow.innerHTML = "❄";
+    snow.style.left = Math.random() * 100 + "vw";
+    snow.style.fontSize = Math.random() * 10 + 10 + "px";
+    snow.style.animationDuration = Math.random() * 3 + 2 + "s";
+    document.body.appendChild(snow);
+    setTimeout(() => snow.remove(), 5000);
+}
+
+/* FIREWORK */
+function createFirework() {
+    const fw = document.createElement("div");
+    fw.className = "firework";
+    fw.style.left = Math.random() * 100 + "vw";
+    fw.style.top = Math.random() * 60 + "vh";
+    document.body.appendChild(fw);
+    setTimeout(() => fw.remove(), 1000);
+}
+
+/* GANTI UCAPAN */
+function changeMessage() {
+    const title = document.getElementById("title");
+    const message = document.getElementById("message");
+
+    clearInterval(snowInterval);
+    clearInterval(fireworkInterval);
+
+    if (!isNewYear) {
+        title.innerHTML = "🎆 Selamat Tahun Baru 🎆";
+        message.innerHTML = `
+            Semoga tahun baru membawa<br>
+            harapan baru, kesehatan,<br>
+            dan kebahagiaan tanpa batas ✨
+        `;
+        fireworkInterval = setInterval(createFirework, 700);
+        isNewYear = true;
+    } else {
+        title.innerHTML = "🎄 Selamat Hari Natal 🎄";
+        message.innerHTML = `
+            Semoga Natal ini membawa damai,<br>
+            sukacita, dan kasih yang hangat<br>
+            untuk hari ini dan seterusnya ✨
+        `;
+        snowInterval = setInterval(createSnow, 200);
+        isNewYear = false;
     }
-    setInterval(createSnow, 200);
+}
 
-    // MUSIK
-    function toggleMusic() {
-        const music = document.getElementById("music");
-        if (music.paused) {
-            music.play();
-        } else {
-            music.pause();
-        }
-    }
-
-    // GANTI UCAPAN
-    let isNewYear = false;
-    function changeMessage() {
-        const title = document.getElementById("title");
-        const message = document.getElementById("message");
-
-        if (!isNewYear) {
-            title.innerHTML = "🎆 Selamat Tahun Baru 🎆";
-            message.innerHTML = `
-                Semoga tahun baru membawa<br>
-                harapan baru, kesehatan,<br>
-                dan kebahagiaan tanpa batas ✨
-            `;
-            isNewYear = true;
-        } else {
-            title.innerHTML = "🎄 Selamat Hari Natal 🎄";
-            message.innerHTML = `
-                Semoga Natal ini membawa damai,<br>
-                sukacita, dan kasih yang hangat<br>
-                untuk hari ini dan seterusnya ✨
-            `;
-            isNewYear = false;
-        }
-    }
+/* DEFAULT NATAL */
+snowInterval = setInterval(createSnow, 200);
 </script>
 
 </body>
