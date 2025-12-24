@@ -18,7 +18,6 @@ body {
     transition: background 1.5s ease;
 }
 
-/* CONTAINER */
 .container {
     position: relative;
     z-index: 2;
@@ -29,7 +28,6 @@ body {
     padding: 20px;
 }
 
-/* CARD */
 .card {
     background: rgba(20,108,67,0.88);
     backdrop-filter: blur(8px);
@@ -58,7 +56,6 @@ body {
 h1 { color: #ffdd57; margin-top: 0; }
 p { line-height: 1.6; }
 
-/* BUTTON */
 button {
     width: 100%;
     background: #ff5c5c;
@@ -77,7 +74,6 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* COUNTDOWN */
 #countdown {
     margin-top: 10px;
     font-size: 14px;
@@ -90,7 +86,6 @@ button:disabled {
     opacity: 0.8;
 }
 
-/* SALJU */
 .snow {
     position: absolute;
     top: -10px;
@@ -103,7 +98,6 @@ button:disabled {
     to { transform: translateY(110vh); }
 }
 
-/* KEMBANG API */
 .firework {
     position: absolute;
     width: 6px;
@@ -122,9 +116,9 @@ button:disabled {
 
 <body>
 
-<!-- MUSIK -->
+<!-- AUDIO -->
 <audio id="music" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/12/06/audio_4b0f6b9fa5.mp3" type="audio/mpeg">
+    <source src="music.mp3" type="audio/mpeg">
 </audio>
 
 <div class="container">
@@ -142,20 +136,32 @@ button:disabled {
 
         <div id="countdown">⏳ Menghitung waktu...</div>
 
-        <button onclick="toggleMusic()">🎵 Play / Pause Musik</button>
+        <!-- TOGGLE BUTTON -->
+        <button id="musicBtn" onclick="toggleMusic()">▶ Play Music</button>
 
         <div class="footer">From Zacacu</div>
     </div>
 </div>
 
 <script>
-// ===== MUSIK =====
+/* ===== MUSIK (FIX AUTOPLAY ISSUE) ===== */
+const music = document.getElementById("music");
+const musicBtn = document.getElementById("musicBtn");
+let isPlaying = false;
+
 function toggleMusic() {
-    const m = document.getElementById("music");
-    m.paused ? m.play() : m.pause();
+    if (!isPlaying) {
+        music.play();
+        isPlaying = true;
+        musicBtn.innerHTML = "⏸ Pause Music";
+    } else {
+        music.pause();
+        isPlaying = false;
+        musicBtn.innerHTML = "▶ Play Music";
+    }
 }
 
-// ===== SALJU (NATAL) =====
+/* ===== SALJU ===== */
 let snowInterval = setInterval(() => {
     const s = document.createElement("div");
     s.className = "snow";
@@ -167,7 +173,7 @@ let snowInterval = setInterval(() => {
     setTimeout(() => s.remove(), 6000);
 }, 200);
 
-// ===== COUNTDOWN =====
+/* ===== COUNTDOWN ===== */
 const btn = document.getElementById("btnNewYear");
 const countdown = document.getElementById("countdown");
 const card = document.getElementById("card");
@@ -196,7 +202,7 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// ===== TRANSISI KE TAHUN BARU =====
+/* ===== TRANSISI TAHUN BARU ===== */
 function openNewYear() {
     card.classList.add("fade-out");
 
@@ -208,9 +214,9 @@ function openNewYear() {
             <h1>🎆 Happy New Year 🎆</h1>
             <p>
                 Semoga tahun baru membawa harapan baru, kesehatan,
-                dan kebahagiaan tanpa batas serta perasaan kamu tidak ikut berubah ✨
+                dan kebahagiaan tanpa batas ✨
             </p>
-            <button onclick="toggleMusic()">🎵 Play / Pause Musik</button>
+            <button id="musicBtn" onclick="toggleMusic()">▶ Play Music</button>
             <div class="footer">From Zacacu</div>
         `;
         card.classList.remove("fade-out");
@@ -219,7 +225,7 @@ function openNewYear() {
     }, 1000);
 }
 
-// ===== KEMBANG API =====
+/* ===== KEMBANG API ===== */
 function startFireworks() {
     setInterval(() => {
         const f = document.createElement("div");
@@ -234,6 +240,3 @@ function startFireworks() {
 
 </body>
 </html>
-
-
-
