@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Selamat Natal & Tahun Baru</title>
+
+<style>
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(#0b3d2e, #1e293b);
+        font-family: Arial, sans-serif;
+        overflow-x: hidden;
+        color: white;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .card {
+        position: relative;
+        z-index: 2;
+        background: rgba(20, 108, 67, 0.9);
+        width: 100%;
+        max-width: 420px;
+        padding: 25px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+        color: #ffdd57;
+        margin-top: 0;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    button {
+        background-color: #ff4d4d;
+        border: none;
+        padding: 14px 22px;
+        color: white;
+        border-radius: 12px;
+        cursor: pointer;
+        margin: 8px;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #ff1a1a;
+    }
+
+    .snow {
+        position: absolute;
+        top: -10px;
+        color: white;
+        animation: fall linear infinite;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    @keyframes fall {
+        to {
+            transform: translateY(110vh);
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 22px;
+        }
+
+        h2 {
+            font-size: 18px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- MUSIK -->
+<audio id="music" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/12/06/audio_4b0f6b9fa5.mp3" type="audio/mpeg">
+</audio>
+
+<div class="card">
+    <h1 id="title">🎄 Selamat Hari Natal 🎄</h1>
+    <h2>Untuk Tiurma Warna Purba</h2>
+
+    <p id="message">
+        Semoga Natal ini membawa damai,<br>
+        sukacita, dan kasih yang hangat<br>
+        untuk hari ini dan seterusnya ✨
+    </p>
+
+    <button onclick="changeMessage()">🎆 Ucapan Tahun Baru</button>
+    <button onclick="toggleMusic()">🔊 Musik ON / OFF</button>
+</div>
+
+<script>
+    // SALJU
+    function createSnow() {
+        const snow = document.createElement("div");
+        snow.classList.add("snow");
+        snow.innerHTML = "❄";
+        snow.style.left = Math.random() * 100 + "vw";
+        snow.style.animationDuration = Math.random() * 3 + 2 + "s";
+        snow.style.fontSize = Math.random() * 10 + 10 + "px";
+        document.body.appendChild(snow);
+
+        setTimeout(() => {
+            snow.remove();
+        }, 5000);
+    }
+    setInterval(createSnow, 200);
+
+    // MUSIK
+    function toggleMusic() {
+        const music = document.getElementById("music");
+        if (music.paused) {
+            music.play();
+        } else {
+            music.pause();
+        }
+    }
+
+    // GANTI UCAPAN
+    let isNewYear = false;
+    function changeMessage() {
+        const title = document.getElementById("title");
+        const message = document.getElementById("message");
+
+        if (!isNewYear) {
+            title.innerHTML = "🎆 Selamat Tahun Baru 🎆";
+            message.innerHTML = `
+                Semoga tahun baru membawa<br>
+                harapan baru, kesehatan,<br>
+                dan kebahagiaan tanpa batas ✨
+            `;
+            isNewYear = true;
+        } else {
+            title.innerHTML = "🎄 Selamat Hari Natal 🎄";
+            message.innerHTML = `
+                Semoga Natal ini membawa damai,<br>
+                sukacita, dan kasih yang hangat<br>
+                untuk hari ini dan seterusnya ✨
+            `;
+            isNewYear = false;
+        }
+    }
+</script>
+
+</body>
+</html>
