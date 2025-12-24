@@ -13,213 +13,78 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #0b3d2e, #1e293b);
-    font-family: 'Segoe UI', sans-serif;
-    overflow: hidden;
+    background: linear-gradient(180deg, #0b3d2e, #1e293b);
+    font-family: Arial, sans-serif;
     color: white;
+    overflow: hidden;
+}
+
+/* CONTAINER TENGAH */
+.container {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
 /* CARD */
 .card {
-    position: relative;
-    z-index: 5;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(10px);
-    max-width: 90%;
-    width: 380px;
-    margin: auto;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 25px 20px;
-    border-radius: 20px;
+    background: rgba(20, 108, 67, 0.88);
+    backdrop-filter: blur(8px);
+    width: 100%;
+    max-width: 420px;
+    padding: 30px 25px;
+    border-radius: 22px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    animation: fadeIn 2s ease;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    animation: fadeIn 1.2s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
 }
 
 h1 {
     color: #ffdd57;
-    margin-bottom: 10px;
+    margin-top: 0;
 }
 
 h2 {
     font-weight: normal;
-    font-size: 1.1em;
 }
 
 p {
     line-height: 1.6;
-    font-size: 0.95em;
 }
 
 /* BUTTON */
 button {
     width: 100%;
-    margin-top: 10px;
-    background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
+    background: #ff5c5c;
     border: none;
-    padding: 12px;
+    padding: 14px;
     color: white;
-    border-radius: 12px;
-    font-size: 0.95em;
+    border-radius: 14px;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 12px;
+    font-size: 16px;
+    transition: 0.3s;
 }
 
-button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+button:hover:not(:disabled) {
+    background: #ff3030;
 }
 
-/* FROM */
-.from {
-    margin-top: 15px;
-    font-style: italic;
-    font-size: 0.85em;
-    opacity: 0.8;
+button:disabled {
+    background: #777;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
-/* SALJU */
-.snow {
-    position: absolute;
-    top: -10px;
-    color: white;
-    animation: fall linear infinite;
-    z-index: 1;
-}
-
-@keyframes fall {
-    to {
-        transform: translateY(110vh);
-    }
-}
-
-/* FIREWORK */
-.firework {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: transparent;
-    border-radius: 50%;
-    animation: explode 1s ease-out forwards;
-    z-index: 1;
-}
-
-@keyframes explode {
-    0% {
-        box-shadow: 0 0 #fff;
-        opacity: 1;
-    }
-    100% {
-        box-shadow:
-            0 -80px red,
-            56px -56px yellow,
-            80px 0 cyan,
-            56px 56px magenta,
-            0 80px lime,
-            -56px 56px orange,
-            -80px 0 violet,
-            -56px -56px pink;
-        opacity: 0;
-    }
-}
-
-@keyframes fadeIn {
-    from {opacity:0; transform: translateY(-45%);}
-    to {opacity:1; transform: translateY(-50%);}
-}
-</style>
-</head>
-
-<body>
-
-<!-- MUSIK -->
-<audio id="music" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/12/06/audio_4b0f6b9fa5.mp3" type="audio/mpeg">
-</audio>
-
-<div class="card">
-    <h1 id="title">🎄 Selamat Hari Natal 🎄</h1>
-    <h2>Untuk Tiurma Warna Purba</h2>
-
-    <p id="message">
-        Semoga Natal ini membawa damai,<br>
-        sukacita, dan kasih yang hangat<br>
-        untuk hari ini dan seterusnya ✨
-    </p>
-
-    <button onclick="changeMessage()">🎆 Ganti Ucapan</button>
-    <button onclick="toggleMusic()">🎵 Play / Pause Musik</button>
-
-    <div class="from">- From Zacacu -</div>
-</div>
-
-<script>
-let isNewYear = false;
-let snowInterval;
-let fireworkInterval;
-
-/* MUSIK */
-function toggleMusic() {
-    const music = document.getElementById("music");
-    if (music.paused) music.play();
-    else music.pause();
-}
-
-/* SALJU */
-function createSnow() {
-    const snow = document.createElement("div");
-    snow.className = "snow";
-    snow.innerHTML = "❄";
-    snow.style.left = Math.random() * 100 + "vw";
-    snow.style.fontSize = Math.random() * 10 + 10 + "px";
-    snow.style.animationDuration = Math.random() * 3 + 2 + "s";
-    document.body.appendChild(snow);
-    setTimeout(() => snow.remove(), 5000);
-}
-
-/* FIREWORK */
-function createFirework() {
-    const fw = document.createElement("div");
-    fw.className = "firework";
-    fw.style.left = Math.random() * 100 + "vw";
-    fw.style.top = Math.random() * 60 + "vh";
-    document.body.appendChild(fw);
-    setTimeout(() => fw.remove(), 1000);
-}
-
-/* GANTI UCAPAN */
-function changeMessage() {
-    const title = document.getElementById("title");
-    const message = document.getElementById("message");
-
-    clearInterval(snowInterval);
-    clearInterval(fireworkInterval);
-
-    if (!isNewYear) {
-        title.innerHTML = "🎆 Selamat Tahun Baru 🎆";
-        message.innerHTML = `
-            Semoga tahun baru membawa<br>
-            harapan baru, kesehatan,<br>
-            dan kebahagiaan tanpa batas ✨
-        `;
-        fireworkInterval = setInterval(createFirework, 700);
-        isNewYear = true;
-    } else {
-        title.innerHTML = "🎄 Selamat Hari Natal 🎄";
-        message.innerHTML = `
-            Semoga Natal ini membawa damai,<br>
-            sukacita, dan kasih yang hangat<br>
-            untuk hari ini dan seterusnya ✨
-        `;
-        snowInterval = setInterval(createSnow, 200);
-        isNewYear = false;
-    }
-}
-
-/* DEFAULT NATAL */
-snowInterval = setInterval(createSnow, 200);
-</script>
-
-</body>
-</html>
+/* COUNTDOWN */
+#countdown {
+    mar
