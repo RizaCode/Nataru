@@ -6,9 +6,7 @@
 <title>Selamat Natal & Tahun Baru</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -17,9 +15,10 @@ body {
     font-family: Arial, sans-serif;
     color: white;
     overflow: hidden;
+    transition: background 1.5s ease;
 }
 
-/* CONTAINER TENGAH */
+/* CONTAINER */
 .container {
     position: relative;
     z-index: 2;
@@ -32,7 +31,7 @@ body {
 
 /* CARD */
 .card {
-    background: rgba(20, 108, 67, 0.88);
+    background: rgba(20,108,67,0.88);
     backdrop-filter: blur(8px);
     width: 100%;
     max-width: 420px;
@@ -48,18 +47,16 @@ body {
     to {opacity: 1; transform: translateY(0);}
 }
 
-h1 {
-    color: #ffdd57;
-    margin-top: 0;
+.fade-out {
+    animation: fadeOut 1s forwards;
 }
 
-h2 {
-    font-weight: normal;
+@keyframes fadeOut {
+    to {opacity: 0; transform: scale(0.95);}
 }
 
-p {
-    line-height: 1.6;
-}
+h1 { color: #ffdd57; margin-top: 0; }
+p { line-height: 1.6; }
 
 /* BUTTON */
 button {
@@ -75,14 +72,9 @@ button {
     transition: 0.3s;
 }
 
-button:hover:not(:disabled) {
-    background: #ff3030;
-}
-
 button:disabled {
     background: #777;
     cursor: not-allowed;
-    opacity: 0.6;
 }
 
 /* COUNTDOWN */
@@ -92,7 +84,6 @@ button:disabled {
     opacity: 0.85;
 }
 
-/* FOOTER */
 .footer {
     margin-top: 18px;
     font-style: italic;
@@ -103,16 +94,28 @@ button:disabled {
 .snow {
     position: absolute;
     top: -10px;
-    color: white;
     animation: fall linear infinite;
     user-select: none;
     pointer-events: none;
 }
 
 @keyframes fall {
-    to {
-        transform: translateY(110vh);
-    }
+    to { transform: translateY(110vh); }
+}
+
+/* KEMBANG API */
+.firework {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: gold;
+    border-radius: 50%;
+    animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(20); opacity: 0; }
 }
 </style>
 </head>
@@ -125,55 +128,50 @@ button:disabled {
 </audio>
 
 <div class="container">
-    <div class="card">
-        <h1>🎄 Selamat Hari Natal 🎄</h1>
+    <div class="card" id="card">
+        <h1 id="title">🎄 Christmas Eve 🎄</h1>
         <h2>Untuk Tiurma Warna Purba</h2>
 
-        <p>
-            Semoga Natal ini membawa damai,<br>
-            sukacita, dan kasih yang hangat<br>
-            untuk hari ini dan seterusnya ✨
+        <p id="message">
+            Semoga Natal ini membawa dan memberikan damai,<br>
+            sukacita, dan kasih yang hangat ✨
         </p>
 
         <button id="btnNewYear" disabled>
-            🎆 Selamat Tahun Baru (Tidak Tersedia)
+            🎆 New Year Eve (Tidak Tersedia)
         </button>
 
         <div id="countdown">⏳ Menghitung waktu...</div>
 
         <button onclick="toggleMusic()">🎵 Play / Pause Musik</button>
 
-        <div class="footer">- From Zacacu -</div>
+        <div class="footer">From Zacacu</div>
     </div>
 </div>
 
 <script>
-// ================= SALJU =================
-function createSnow() {
-    const snow = document.createElement("div");
-    snow.className = "snow";
-    snow.innerHTML = "❄";
-    snow.style.left = Math.random() * 100 + "vw";
-    snow.style.fontSize = Math.random() * 10 + 12 + "px";
-    snow.style.animationDuration = Math.random() * 3 + 3 + "s";
-    document.body.appendChild(snow);
-
-    setTimeout(() => snow.remove(), 6000);
-}
-setInterval(createSnow, 200);
-
-// ================= MUSIK =================
+// ===== MUSIK =====
 function toggleMusic() {
-    const music = document.getElementById("music");
-    if (music.paused) music.play();
-    else music.pause();
+    const m = document.getElementById("music");
+    m.paused ? m.play() : m.pause();
 }
 
-// ================= COUNTDOWN GMT+7 =================
+// ===== SALJU (NATAL) =====
+let snowInterval = setInterval(() => {
+    const s = document.createElement("div");
+    s.className = "snow";
+    s.innerHTML = "❄";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.fontSize = Math.random() * 10 + 12 + "px";
+    s.style.animationDuration = Math.random() * 3 + 3 + "s";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 6000);
+}, 200);
+
+// ===== COUNTDOWN =====
 const btn = document.getElementById("btnNewYear");
 const countdown = document.getElementById("countdown");
-
-// Target 1 Januari 00:00 WIB (GMT+7)
+const card = document.getElementById("card");
 const target = new Date("2026-01-01T00:00:00+07:00");
 
 function updateCountdown() {
@@ -182,26 +180,58 @@ function updateCountdown() {
 
     if (diff <= 0) {
         btn.disabled = false;
-        btn.innerHTML = "🎆 Buka Ucapan Tahun Baru";
+        btn.innerHTML = "🎆 Buka Tahun Baru";
         countdown.innerHTML = "✨ Selamat Tahun Baru! ✨";
-
-        btn.onclick = () => {
-            alert("🎆 Selamat Tahun Baru! 🎆");
-        };
+        btn.onclick = openNewYear;
         return;
     }
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor(diff / 3600000) % 24;
+    const m = Math.floor(diff / 60000) % 60;
+    const s = Math.floor(diff / 1000) % 60;
 
     countdown.innerHTML =
-        `⏳ Tersedia dalam ${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+        `⏳ Tersedia dalam ${d} Hari ${h} Jam ${m} Menit ${s} Detik`;
 }
-
 setInterval(updateCountdown, 1000);
 updateCountdown();
+
+// ===== TRANSISI KE TAHUN BARU =====
+function openNewYear() {
+    card.classList.add("fade-out");
+
+    setTimeout(() => {
+        document.body.style.background =
+            "linear-gradient(180deg, #0f2027, #203a43, #2c5364)";
+
+        card.innerHTML = `
+            <h1>🎆 Happy New Year 🎆</h1>
+            <p>
+                Semoga tahun baru membawa<br>
+                harapan baru, kesehatan,<br>
+                dan kebahagiaan tanpa batas ✨
+            </p>
+            <button onclick="toggleMusic()">🎵 Play / Pause Musik</button>
+            <div class="footer">From Zacacu</div>
+        `;
+        card.classList.remove("fade-out");
+        startFireworks();
+        clearInterval(snowInterval);
+    }, 1000);
+}
+
+// ===== KEMBANG API =====
+function startFireworks() {
+    setInterval(() => {
+        const f = document.createElement("div");
+        f.className = "firework";
+        f.style.left = Math.random() * 100 + "vw";
+        f.style.top = Math.random() * 50 + "vh";
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), 1000);
+    }, 300);
+}
 </script>
 
 </body>
